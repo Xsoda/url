@@ -3,7 +3,7 @@
 /* File-name:    <url.h> */
 /* Author:       <Xsoda> */
 /* Create:       <Friday December 20 12:47:08 2013> */
-/* Time-stamp:   <Friday December 20, 14:29:56 2013> */
+/* Time-stamp:   <Monday December 23, 9:38:59 2013> */
 /* Mail:         <Xsoda@Live.com> */
 
 #ifndef __URL_H__
@@ -25,7 +25,16 @@
  *
  */
 
-typedef struct _url_field {
+typedef enum
+{
+   HOST_IPV4,
+   HOST_IPV6,
+   HOST_DOMAIN
+} host_type_t;
+
+typedef struct _url_field
+{
+   host_type_t host_type;
    char *href;
    char *schema;
    char *username;

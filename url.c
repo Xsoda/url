@@ -3,7 +3,7 @@
 /* File-name:    <url.c> */
 /* Author:       <Xsoda> */
 /* Create:       <Friday December 20 12:38:02 2013> */
-/* Time-stamp:   <Friday December 20, 15:4:16 2013> */
+/* Time-stamp:   <Monday December 23, 9:39:24 2013> */
 /* Mail:         <Xsoda@Live.com> */
 
 #include "url.h"
@@ -11,9 +11,12 @@
 #include <stdio.h>
 #include <string.h>
 
+static char *str_hosttype[] = { "host ipv4", "host ipv6", "host domain", NULL };
+
 static char *strndup(const char *str, int n)
 {
    char *dst;
+   if (!str) return NULL;
    if (n < 0) n = strlen(str);
    if (n == 0) return NULL;
    if ((dst = (char *)malloc(n + 1)) == NULL)
@@ -21,6 +24,19 @@ static char *strndup(const char *str, int n)
    memcpy(dst, str, n);
    dst[n] = 0;
    return dst;
+}
+
+static int host_is_ipv4(char *str)
+{
+   if (!str) return 0;
+   while (*str)
+   {
+      if ((*str >= '0' && *str <= '9') || *str == '.')
+         str++;
+      else
+         return 0;
+   }
+   return 1;
 }
 
 url_field_t *url_parse (const char *str)
@@ -84,6 +100,7 @@ url_field_t *url_parse (const char *str)
                   str = str + strlen(str);
                }
             }
+            url->host_type = HOST_IPV6;
          }
          else
             goto __fail;
@@ -121,6 +138,7 @@ url_field_t *url_parse (const char *str)
                str = str + strlen(str);
             }
          }
+         url->host_type = host_is_ipv4(url->host) ? HOST_IPV4 : HOST_DOMAIN;
       }
       if (str[0])               /* parse path, parament and fragment */
       {
@@ -194,7 +212,7 @@ void url_field_print(url_field_t *url)
       fprintf(stdout, "  - username: '%s'\n", url->username);
    if (url->password)
       fprintf(stdout, "  - password: '%s'\n", url->password);
-   fprintf(stdout, "  - host:     '%s'\n", url->host);
+   fprintf(stdout, "  - host:     '%s' (%s)\n", url->host, str_hosttype[url->host_type]);
    if (url->port)
       fprintf(stdout, "  - port:     '%s'\n", url->port);
    if (url->path)
@@ -208,9 +226,9 @@ void url_field_print(url_field_t *url)
 int main()
 {
    char *str[] = {
-      "scheme://host",
-      "http://[::1]:8080/index.html",
-      "scheme://username:password@host",
+      "scheme://0.0.0.0",
+      "http://username:password@[::1]:8080/index.html",
+      "scheme://username:password@www.google.com",
       "scheme://host:port",
       "scheme://host:port/path?id=1&method=get#fragment",
       "scheme://host/path/to/subpath#fragment",
