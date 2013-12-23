@@ -223,6 +223,7 @@ void url_field_print(url_field_t *url)
       fprintf(stdout, "  - fragment: '%s'\n", url->fragment);
 }
 
+#if 0
 int main()
 {
    char *str[] = {
@@ -244,3 +245,4 @@ int main()
    }
    return 0;
 }
+#endif
