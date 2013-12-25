@@ -3,7 +3,7 @@
 /* File-name:    <url.c> */
 /* Author:       <Xsoda> */
 /* Create:       <Friday December 20 12:38:02 2013> */
-/* Time-stamp:   <Monday December 23, 9:39:24 2013> */
+/* Time-stamp:   <Wednesday December 25, 10:10:57 2013> */
 /* Mail:         <Xsoda@Live.com> */
 
 #include "url.h"
@@ -140,7 +140,7 @@ url_field_t *url_parse (const char *str)
          }
          url->host_type = host_is_ipv4(url->host) ? HOST_IPV4 : HOST_DOMAIN;
       }
-      if (str[0])               /* parse path, parament and fragment */
+      if (str[0])               /* parse path, query and fragment */
       {
          pch = strchr(str, '?');
          if (pch)
@@ -150,13 +150,13 @@ url_field_t *url_parse (const char *str)
             pch = strchr(str, '#');
             if (pch)
             {
-               url->parament = strndup(str, pch - str);
+               url->query = strndup(str, pch - str);
                str = pch + 1;
-               url->fragment = strndup(str, -1);
+               url->query = strndup(str, -1);
             }
             else
             {
-               url->parament = strndup(str, -1);
+               url->query = strndup(str, -1);
                str = str + strlen(str);
             }
          }
@@ -197,7 +197,7 @@ void url_free(url_field_t *url)
    if (url->host) free(url->host);
    if (url->port) free(url->port);
    if (url->path) free(url->path);
-   if (url->parament) free(url->parament);
+   if (url->query) free(url->query);
    if (url->fragment) free(url->fragment);
    free(url);
 }
@@ -217,8 +217,8 @@ void url_field_print(url_field_t *url)
       fprintf(stdout, "  - port:     '%s'\n", url->port);
    if (url->path)
    fprintf(stdout, "  - path:     '%s'\n", url->path);
-   if (url->parament)
-      fprintf(stdout, "  - parament: '%s'\n", url->parament);
+   if (url->query)
+      fprintf(stdout, "  - query:    '%s'\n", url->query);
    if (url->fragment)
       fprintf(stdout, "  - fragment: '%s'\n", url->fragment);
 }

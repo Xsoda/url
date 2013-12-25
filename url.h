@@ -3,7 +3,7 @@
 /* File-name:    <url.h> */
 /* Author:       <Xsoda> */
 /* Create:       <Friday December 20 12:47:08 2013> */
-/* Time-stamp:   <Monday December 23, 9:38:59 2013> */
+/* Time-stamp:   <Wednesday December 25, 10:9:18 2013> */
 /* Mail:         <Xsoda@Live.com> */
 
 #ifndef __URL_H__
@@ -15,7 +15,7 @@
  * schema://username:password@host:port/path?key=value#fragment
  * \____/   \______/ \______/ \__/ \__/ \__/ \_______/ \______/
  *   |         |        |       |    |    |      |         |
- * schema      |     password   |   port  |   parament  fragment
+ * schema      |     password   |   port  |    query    fragment
  *          username          host      path
  *
  * note:
@@ -42,7 +42,7 @@ typedef struct _url_field
    char *host;
    char *port;
    char *path;
-   char *parament;
+   char *query;
    char *fragment;
 } url_field_t;
 
