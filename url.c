@@ -222,27 +222,3 @@ void url_field_print(url_field_t *url)
    if (url->fragment)
       fprintf(stdout, "  - fragment: '%s'\n", url->fragment);
 }
-
-#if 0
-int main()
-{
-   char *str[] = {
-      "scheme://0.0.0.0",
-      "http://username:password@[::1]:8080/index.html",
-      "scheme://username:password@www.google.com",
-      "scheme://host:port",
-      "scheme://host:port/path?id=1&method=get#fragment",
-      "scheme://host/path/to/subpath#fragment",
-      "scheme://username:password@host/path?name=test#fragment",
-      "scheme://username:password@host:port/path?name=test#fragment",
-      NULL
-   };
-   for (int i = 0; str[i]; i++)
-   {
-      url_field_t *url = url_parse(str[i]);
-      url_field_print(url);
-      url_free(url);
-   }
-   return 0;
-}
-#endif
