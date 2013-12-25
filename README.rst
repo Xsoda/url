@@ -4,7 +4,7 @@
    File-name:    <README.rst>
    Author:       <Xsoda>
    Create:       <Wednesday December 25 10:11:22 2013>
-   Time-stamp:   <Wednesday December 25, 10:16:46 2013>
+   Time-stamp:   <Wednesday December 25, 10:23:3 2013>
 
 URL parse
 ============
@@ -13,7 +13,7 @@ mini URL parse code.
 
 url struct define:
 
-.. code::
+.. code:: c
 
    /*
     * parse url like this
@@ -47,7 +47,7 @@ url struct define:
 
 parse function define:
 
-.. code::
+.. code:: c
 
    url_field_t *url_parse(const char *str);
    void url_free(url_field_t *url);
@@ -55,7 +55,7 @@ parse function define:
 
 Usage:
 
-.. code::
+.. code:: c
 
    int main()
    {
