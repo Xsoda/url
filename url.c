@@ -39,10 +39,44 @@ static int host_is_ipv4(char *str)
    return 1;
 }
 
+void parse_query(url_field_t *url, char *query)
+{
+   int length;
+   int offset;
+   char *chr;
+   length = strlen(query);
+   offset = 0;
+   chr = strchr(query, '=');
+   while (chr)
+   {
+      if (url->query)
+         url->query = realloc(url->query, (url->query_num + 1) * sizeof(*url->query));
+      else
+         url->query = malloc(sizeof(*url->query));
+      url->query[url->query_num].name = strndup(query, chr - query);
+      query = chr + 1;
+      chr = strchr(query, '&');
+      if (chr)
+      {
+         url->query[url->query_num].value = strndup(query, chr - query);
+         url->query_num++;
+         query = chr + 1;
+         chr = strchr(query, '=');
+      }
+      else
+      {
+         url->query[url->query_num].value = strndup(query, -1);
+         url->query_num++;
+         break;
+      }
+   }
+}
 url_field_t *url_parse (const char *str)
 {
    const char *pch;
+   char *query;
    url_field_t *url;
+   query = NULL;
    if ((url = (url_field_t *)malloc(sizeof(url_field_t))) == NULL)
       return NULL;
    memset(url, 0, sizeof(url_field_t));
@@ -150,15 +184,17 @@ url_field_t *url_parse (const char *str)
             pch = strchr(str, '#');
             if (pch)
             {
-               url->query = strndup(str, pch - str);
+               query = strndup(str, pch - str);
                str = pch + 1;
-               url->query = strndup(str, -1);
+               url->fragment = strndup(str, -1);
             }
             else
             {
-               url->query = strndup(str, -1);
+               query = strndup(str, -1);
                str = str + strlen(str);
             }
+            parse_query(url, query);
+            free(query);
          }
          else
          {
@@ -197,7 +233,16 @@ void url_free(url_field_t *url)
    if (url->host) free(url->host);
    if (url->port) free(url->port);
    if (url->path) free(url->path);
-   if (url->query) free(url->query);
+   if (url->query)
+   {
+      int i;
+      for (i = 0; i < url->query_num; i++)
+      {
+         free(url->query[i].name);
+         free(url->query[i].value);
+      }
+      free(url->query);
+   }
    if (url->fragment) free(url->fragment);
    free(url);
 }
@@ -205,7 +250,7 @@ void url_free(url_field_t *url)
 void url_field_print(url_field_t *url)
 {
    if (!url) return;
-   fprintf(stdout, "\nuri field:\n");
+   fprintf(stdout, "\nurl field:\n");
    fprintf(stdout, "  - href:     '%s'\n", url->href);
    fprintf(stdout, "  - schema:   '%s'\n", url->schema);
    if (url->username)
@@ -217,8 +262,23 @@ void url_field_print(url_field_t *url)
       fprintf(stdout, "  - port:     '%s'\n", url->port);
    if (url->path)
    fprintf(stdout, "  - path:     '%s'\n", url->path);
-   if (url->query)
-      fprintf(stdout, "  - query:    '%s'\n", url->query);
+   if (url->query_num > 0)
+   {
+      int i;
+      fprintf(stdout, "  - query\n");
+      for (i = 0; i < url->query_num; i++)
+      {
+         fprintf(stdout, "    * %s : %s\n", url->query[i].name, url->query[i].value);
+      }
+   }
    if (url->fragment)
       fprintf(stdout, "  - fragment: '%s'\n", url->fragment);
 }
+#if 0
+int main()
+{
+   url_field_t *url = url_parse("schema://usr:pwd@localhost:port/path?a=b&c=d&e=f#foo");
+   url_field_print(url);
+   url_free(url);
+}
+#endif
