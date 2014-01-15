@@ -42,7 +42,11 @@ typedef struct _url_field
    char *host;
    char *port;
    char *path;
-   char *query;
+   int query_num;
+   struct {
+      char *name;
+      char *value;
+   } *query;
    char *fragment;
 } url_field_t;
 
