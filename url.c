@@ -141,8 +141,10 @@ url_field_t *url_parse (const char *str)
       }
       else
       {
+         const char *pch_slash;
          pch = strchr(str, ':');
-         if (pch)
+         pch_slash = strchr(str, '/');
+         if (pch && (!pch_slash || (pch_slash && pch<pch_slash)))
          {
             url->host = strndup(str, pch - str);
             str = pch + 1;
@@ -282,3 +284,4 @@ int main()
    url_free(url);
 }
 #endif
+
